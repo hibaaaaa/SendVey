@@ -3,7 +3,7 @@ const app = express();
 
 //route handler watching for incoming HTTP requests
 app.get("/", (req, res) => {
-  res.send({ hi: "there" });
+  res.send({ bye: "buddy" });
 });
 //look at the environment and see if Heroku has
 //declared a port for us to use
