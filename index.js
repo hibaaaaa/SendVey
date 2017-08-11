@@ -1,13 +1,33 @@
-const express = require("express");
+const express = require('express');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const keys = require('./config/keys');
+
 const app = express();
 
-//route handler watching for incoming HTTP requests
-app.get("/", (req, res) => {
-  res.send({ bye: "buddy" });
-});
-//look at the environment and see if Heroku has
-//declared a port for us to use
-//if there is an environment variable already defined
-//by Heroku go ahead otherwise just use port 5000
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: keys.googleClientID,
+      clientSecret: keys.googleClientSecret,
+      callbackURL: '/auth/google/callback'
+    },
+    (accessToken, refreshToken, profile, done) => {
+      console.log('accesss token ', accessToken);
+      console.log('refresh token ', refreshToken);
+      console.log('profile: ', profile);
+    }
+  )
+);
+
+app.get(
+  '/auth/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email']
+  })
+);
+
+app.get('/auth/google/callback', passport.authenticate('google'));
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT);
